@@ -1,5 +1,4 @@
 
 
 ```bash
-docker-compose up
-```
+docker-compose --env-file .env.example up```
