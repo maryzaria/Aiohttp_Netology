@@ -13,9 +13,13 @@ class HttpError(Exception):
         self.message = message
 
 
-def base_request(method: Literal["get", "post", "delete", "patch"], path: str, *args, **kwargs) -> dict:
+def base_request(
+    method: Literal["get", "post", "delete", "patch"], path: str, *args, **kwargs
+) -> dict:
     print(f"{API_URL}/{path}")
-    response: requests.Response = getattr(session, method)(f"{API_URL}/{path}", *args, **kwargs)
+    response: requests.Response = getattr(session, method)(
+        f"{API_URL}/{path}", *args, **kwargs
+    )
     if response.status_code >= 400:
         try:
             message = response.json()
@@ -39,7 +43,9 @@ def get_user(user_id: int, token: str) -> dict:
 
 
 def patch_user(user_id: int, patch: dict, token: str) -> dict:
-    return base_request("patch", f"users/{user_id}", json=patch, headers={"token": token})
+    return base_request(
+        "patch", f"users/{user_id}", json=patch, headers={"token": token}
+    )
 
 
 def delete_user(user_id: int, token: str) -> dict:

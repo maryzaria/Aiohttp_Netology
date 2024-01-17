@@ -13,7 +13,9 @@ from models import Base, User
 from auth import hash_password
 from tests.config import API_URL
 
-engine = create_engine(f"postgresql://{PG_USER}:{PG_PASSWORD}@{PG_HOST}:{PG_PORT}/{PG_DB}")
+engine = create_engine(
+    f"postgresql://{PG_USER}:{PG_PASSWORD}@{PG_HOST}:{PG_PORT}/{PG_DB}"
+)
 Session = sessionmaker(bind=engine)
 
 
@@ -27,7 +29,6 @@ class UserData:
 
 @pytest.fixture(scope="session", autouse=True)
 def init_database():
-
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
     yield
@@ -40,7 +41,12 @@ def create_user(name: str, password: str):
         new_user = User(name=name, password=password)
         session.add(new_user)
         session.commit()
-        return UserData(id=new_user.id, name=name, password=password, creation_time=new_user.creation_time)
+        return UserData(
+            id=new_user.id,
+            name=name,
+            password=password,
+            creation_time=new_user.creation_time,
+        )
 
 
 @pytest.fixture(scope="session", autouse=True)

@@ -18,7 +18,9 @@ engine = create_async_engine(PG_DSN)
 
 Session = sessionmaker(bind=engine, expire_on_commit=False, class_=AsyncSession)
 
-ERROR_TYPE = Type[web.HTTPUnauthorized] | Type[web.HTTPForbidden] | Type[web.HTTPNotFound]
+ERROR_TYPE = (
+    Type[web.HTTPUnauthorized] | Type[web.HTTPForbidden] | Type[web.HTTPNotFound]
+)
 
 
 def raise_http_error(error_class: ERROR_TYPE, message: str | dict):
@@ -28,7 +30,9 @@ def raise_http_error(error_class: ERROR_TYPE, message: str | dict):
     )
 
 
-async def get_orm_item(item_class: Type[User] | Type[Token], item_id: int | str, session: Session) -> User | Token:
+async def get_orm_item(
+    item_class: Type[User] | Type[Token], item_id: int | str, session: Session
+) -> User | Token:
     item = await session.get(item_class, item_id)
     if item is None:
         raise raise_http_error(web.HTTPNotFound, f"{item_class.__name__} not found")
@@ -56,7 +60,11 @@ async def auth_middleware(
         token = await get_orm_item(Token, token_id, request["session"])
     except web.HTTPNotFound:
         token = None
-    if not token or token.creation_time + datetime.timedelta(seconds=TOKEN_TTL) <= datetime.datetime.now():
+    if (
+        not token
+        or token.creation_time + datetime.timedelta(seconds=TOKEN_TTL)
+        <= datetime.datetime.now()
+    ):
         raise_http_error(web.HTTPForbidden, "incorrect token")
     request["token"] = token
     return await handler(request)
@@ -87,7 +95,11 @@ class UserView(web.View):
         user_id = int(self.request.match_info["user_id"])
         user = await get_orm_item(User, user_id, self.request["session"])
         return web.json_response(
-            {"id": user.id, "name": user.name, "creation_time": int(user.creation_time.timestamp())}
+            {
+                "id": user.id,
+                "name": user.name,
+                "creation_time": int(user.creation_time.timestamp()),
+            }
         )
 
     async def post(self):
@@ -136,7 +148,9 @@ async def app_context(app: web.Application):
 
 async def get_app():
     app = web.Application(middlewares=[session_middleware])
-    app_auth_required = web.Application(middlewares=[session_middleware, auth_middleware])
+    app_auth_required = web.Application(
+        middlewares=[session_middleware, auth_middleware]
+    )
 
     app.cleanup_ctx.append(app_context)
     app.add_routes(
