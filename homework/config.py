@@ -1,6 +1,5 @@
 import os
 
-
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "secret")
 POSTGRES_USER = os.getenv("POSTGRES_USER", "app")
 POSTGRES_DB = os.getenv("POSTGRES_DB", "app")

@@ -3,7 +3,7 @@ import json
 from aiohttp import web
 from sqlalchemy.exc import IntegrityError
 
-from models import Session, Advertisement, engine, init_orm
+from models import Advertisement, Session, engine, init_orm
 
 app = web.Application()
 

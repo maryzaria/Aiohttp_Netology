@@ -1,18 +1,17 @@
 import json
+from typing import Optional, Union
 
 import pydantic
 from aiohttp import web
-from typing import Union, Optional
 
-
-class HttpError(web.HTTPException):
-    def __init__(self, error_message: Union[str, dict, list]):
-        message = json.dumps({"status": "error", "description": error_message})
-        super().__init__(text=message, content_type="application/json")
-
-
-class BadRequest(HttpError):
-    status_code = 400
+# class HttpError(web.HTTPException):
+#     def __init__(self, error_message: Union[str, dict, list]):
+#         message = json.dumps({"status": "error", "description": error_message})
+#         super().__init__(text=message, content_type="application/json")
+#
+#
+# class BadRequest(HttpError):
+#     status_code = 400
 
 
 class CheckCreateAdvert(pydantic.BaseModel):
