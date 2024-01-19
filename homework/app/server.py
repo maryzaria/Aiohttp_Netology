@@ -4,6 +4,7 @@ from aiohttp import web
 from sqlalchemy.exc import IntegrityError
 
 from models import Advertisement, Session, engine, init_orm
+from validator import validate, CheckCreateAdvert, CheckUpdateAdvert
 
 app = web.Application()
 
@@ -73,14 +74,16 @@ class AdvertisementView(web.View):
 
     async def post(self):
         json_data = await self.request.json()
-        advert = Advertisement(**json_data)
+        valid_data = validate(CheckCreateAdvert, json_data)
+        advert = Advertisement(**valid_data)
         await add_advert(self.session, advert)
         return web.json_response({"id": advert.id})
 
     async def patch(self):
         json_data = await self.request.json()
+        valid_data = validate(CheckUpdateAdvert, json_data)
         advert = await self.get_adv()
-        for field, value in json_data.items():
+        for field, value in valid_data.items():
             setattr(advert, field, value)
         await add_advert(self.session, advert)
         return web.json_response(advert.dict)
